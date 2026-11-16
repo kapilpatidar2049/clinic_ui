@@ -1,6 +1,14 @@
 {
   "rewrites": [
     {
+      "source": "/api/:match*",
+      "destination": "https://clinic.justvisionitsolutions.com/api/:match*"
+    },
+    {
+      "source": "/uploads/:match*",
+      "destination": "https://clinic.justvisionitsolutions.com/uploads/:match*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
