@@ -18,6 +18,7 @@ import {
   Activity,
   LogOut,
   X,
+  ExternalLink,
 } from 'lucide-react';
 
 const ROLE_NAV = {
@@ -61,6 +62,15 @@ export const Sidebar = ({ onClose }) => {
   const role = user?.role || 'Patient';
   const navItems = ROLE_NAV[role] || ROLE_NAV.Patient;
 
+  const portalHome =
+    role === 'Admin'
+      ? '/admin'
+      : role === 'Doctor'
+      ? '/doctor'
+      : role === 'Staff'
+      ? '/staff'
+      : '/patient/appointments';
+
   const handleLogout = () => {
     onClose?.();
     logout();
@@ -72,7 +82,7 @@ export const Sidebar = ({ onClose }) => {
       {/* Brand Header */}
       <div className="p-5 border-b border-slate-800/80 flex items-center justify-between shrink-0">
         <Link
-          to="/"
+          to={portalHome}
           onClick={onClose}
           className="flex items-center gap-3 group focus:outline-none"
         >
@@ -135,11 +145,20 @@ export const Sidebar = ({ onClose }) => {
         })}
       </div>
 
-      {/* Footer / Logout */}
-      <div className="p-3 border-t border-slate-800 shrink-0 bg-slate-900/95">
+      {/* Footer / Public Website & Logout */}
+      <div className="p-3 border-t border-slate-800 shrink-0 bg-slate-900/95 space-y-2">
+        <Link
+          to="/"
+          onClick={onClose}
+          className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/60 text-xs font-semibold transition"
+        >
+          <ExternalLink className="w-3.5 h-3.5 text-teal-400" />
+          <span>View Public Website</span>
+        </Link>
+
         <button
           onClick={handleLogout}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 hover:text-rose-200 border border-rose-500/30 text-xs font-semibold transition"
+          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 hover:text-rose-200 border border-rose-500/30 text-xs font-semibold transition cursor-pointer"
         >
           <LogOut className="w-4 h-4" />
           <span>Sign Out</span>

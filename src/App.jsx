@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 
 // Layout
@@ -77,6 +77,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 
 function App() {
   const { user } = useAuth();
+  const location = useLocation();
 
   const routes = (
     <Routes>
@@ -325,7 +326,12 @@ function App() {
         </Routes>
   );
 
-  if (user) {
+  const isPublicPage =
+    location.pathname === '/' ||
+    location.pathname === '/login' ||
+    location.pathname === '/register';
+
+  if (user && !isPublicPage) {
     return <PortalLayout>{routes}</PortalLayout>;
   }
 
