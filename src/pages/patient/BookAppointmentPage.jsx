@@ -17,6 +17,36 @@ import {
   ChevronRight,
 } from 'lucide-react';
 
+// Helper to convert "10:15 AM" to minutes from midnight
+const parseSlotTimeToMinutes = (timeStr) => {
+  if (!timeStr) return 0;
+  const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+  if (!match) return 0;
+  let hours = parseInt(match[1], 10);
+  const minutes = parseInt(match[2], 10);
+  const meridiem = match[3].toUpperCase();
+  if (meridiem === 'PM' && hours < 12) hours += 12;
+  if (meridiem === 'AM' && hours === 12) hours = 0;
+  return hours * 60 + minutes;
+};
+
+// Check if slot is at least 30 mins ahead for today
+const isSlotValidForDate = (slotTime, dateStr) => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const todayStr = `${year}-${month}-${day}`;
+
+  if (dateStr !== todayStr) {
+    return true;
+  }
+
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+  const slotMinutes = parseSlotTimeToMinutes(slotTime);
+  return slotMinutes >= currentMinutes + 30;
+};
+
 export const BookAppointmentPage = () => {
   const { doctorId } = useParams();
   const { user } = useAuth();
@@ -46,6 +76,14 @@ export const BookAppointmentPage = () => {
       fetchSlots(doctorId, selectedDate);
     }
   }, [doctorId, selectedDate]);
+
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  const isSelectedDateToday = selectedDate === todayStr;
+
+  const visibleSlots = (slotsData?.slots || []).filter((slot) =>
+    isSlotValidForDate(slot.slotTime, selectedDate)
+  );
 
   const fetchDoctor = async () => {
     setLoadingDoctor(true);
@@ -276,12 +314,19 @@ export const BookAppointmentPage = () => {
               {/* Step 2: Time Slots */}
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-                    2. Choose Available Time Slot
-                  </label>
-                  {slotsData && (
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                      2. Choose Available Time Slot
+                    </label>
+                    {isSelectedDateToday && (
+                      <p className="text-[11px] text-amber-600 font-medium">
+                        Showing slots starting 30+ mins from now
+                      </p>
+                    )}
+                  </div>
+                  {slotsData && slotsData.isDoctorAvailable && (
                     <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100">
-                      {slotsData.availableSlotsCount} of {slotsData.totalSlots} slots free
+                      {visibleSlots.filter((s) => s.isAvailable).length} of {visibleSlots.length} slots free
                     </span>
                   )}
                 </div>
@@ -295,9 +340,16 @@ export const BookAppointmentPage = () => {
                   <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 text-xs">
                     {slotsData?.message || 'Doctor is not available on this date. Please choose another date.'}
                   </div>
+                ) : visibleSlots.length === 0 ? (
+                  <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 text-xs text-center space-y-1">
+                    <p className="font-bold">No slots remaining for today</p>
+                    <p className="text-[11px] text-amber-700">
+                      OPD slots must be booked at least 30 minutes in advance. Please select another date.
+                    </p>
+                  </div>
                 ) : (
                   <div className="grid grid-cols-3 sm:grid-cols-4 gap-2.5 max-h-56 overflow-y-auto p-1 scrollbar-thin">
-                    {slotsData.slots.map((slot) => (
+                    {visibleSlots.map((slot) => (
                       <button
                         key={slot.slotTime}
                         type="button"
