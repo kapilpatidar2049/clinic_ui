@@ -187,45 +187,54 @@ const DoctorListPage = () => {
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Clinic Doctors & Specialists</h1>
-        <p className="text-xs sm:text-sm text-slate-500 mt-1">
-          Select a physician to check real-time OPD availability, automatic 15-minute slot allocation, and fees.
-        </p>
+    <div className="max-w-7xl mx-auto space-y-5 sm:space-y-8">
+      {/* App Header on Mobile / Desktop */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div>
+          <h1 className="text-xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+            <span>Find Specialists</span>
+            <span className="text-[10px] sm:text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+              Live OPD
+            </span>
+          </h1>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Real-time OPD slots, queue token sequencing & instant consultation booking.
+          </p>
+        </div>
       </div>
 
-      {/* Search & Specialization Filters */}
-      <div className="bg-white p-5 rounded-3xl border border-slate-200/90 shadow-xs flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="relative w-full md:w-96">
+      {/* App Search Bar & Specialty Scroller */}
+      <div className="bg-white p-3 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-xs space-y-3">
+        <div className="relative w-full">
           <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by doctor name or specialty..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-slate-50/50"
+            placeholder="Search doctor by name or specialty..."
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-slate-50/70"
           />
         </div>
 
-        {/* Specialization Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0 scrollbar-none">
+        {/* Specialization Horizontal Scroller */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none -mx-1 px-1">
           <button
+            type="button"
             onClick={() => setSelectedSpec('All')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition cursor-pointer active:scale-95 ${
               selectedSpec === 'All'
                 ? 'bg-emerald-600 text-white shadow-xs'
                 : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
             }`}
           >
-            All Specialties
+            All Specialists
           </button>
           {specializations.map((spec) => (
             <button
               key={spec.name}
+              type="button"
               onClick={() => setSelectedSpec(spec.name)}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition cursor-pointer active:scale-95 ${
                 selectedSpec === spec.name
                   ? 'bg-emerald-600 text-white shadow-xs'
                   : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
@@ -244,51 +253,52 @@ const DoctorListPage = () => {
           Loading verified medical practitioners...
         </div>
       ) : filteredDoctors.length === 0 ? (
-        <div className="bg-white rounded-3xl border border-slate-200 p-12 text-center space-y-3">
+        <div className="bg-white rounded-3xl border border-slate-200 p-8 sm:p-12 text-center space-y-3">
           <Stethoscope className="w-12 h-12 text-slate-300 mx-auto" />
           <h3 className="text-base font-bold text-slate-800">No doctors match your criteria</h3>
           <p className="text-xs text-slate-500">Try choosing a different specialization or clearing search query.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-6">
           {filteredDoctors.map((doc) => (
             <div
               key={doc._id}
-              className="bg-white rounded-3xl border border-slate-200/90 shadow-xs hover:shadow-md transition-shadow p-6 flex flex-col justify-between"
+              className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-xs hover:shadow-md transition p-4 sm:p-6 flex flex-col justify-between"
             >
-              <div className="space-y-4">
-                <div className="flex items-start justify-between gap-4">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 text-white font-bold text-lg flex items-center justify-center shadow-md shadow-emerald-500/20">
+                    <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 text-white font-black text-base sm:text-lg flex items-center justify-center shadow-md shadow-emerald-500/20 shrink-0">
                       {doc.userId?.name ? doc.userId.name.charAt(0) : 'D'}
                     </div>
                     <div>
-                      <h3 className="font-bold text-slate-900 text-base">Dr. {doc.userId?.name}</h3>
-                      <p className="text-xs text-emerald-600 font-semibold">{doc.specialization}</p>
+                      <h3 className="font-extrabold text-slate-900 text-sm sm:text-base leading-tight">
+                        Dr. {doc.userId?.name}
+                      </h3>
+                      <p className="text-xs text-emerald-600 font-bold">{doc.specialization}</p>
                       <p className="text-[11px] text-slate-400">{doc.qualifications || 'MBBS, MD'}</p>
                     </div>
                   </div>
-                  <span className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 font-bold text-xs">
-                    ₹{doc.consultationFee}
-                  </span>
+                  <div className="text-right shrink-0">
+                    <span className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 font-black text-xs block">
+                      ₹{doc.consultationFee}
+                    </span>
+                    <span className="text-[10px] text-slate-400 font-medium">per visit</span>
+                  </div>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-slate-50 space-y-2 text-xs">
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-400">Clinical Experience:</span>
-                    <span className="font-medium text-slate-800">{doc.experienceYears}+ Years</span>
+                <div className="grid grid-cols-3 gap-2 p-2.5 rounded-xl bg-slate-50 text-[11px] text-center border border-slate-100">
+                  <div>
+                    <span className="text-slate-400 block text-[10px]">Experience</span>
+                    <span className="font-bold text-slate-800">{doc.experienceYears}+ Yrs</span>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-400">OPD Reporting Time:</span>
-                    <span className="font-medium text-slate-800">{doc.reportingTime || '09:30 AM'}</span>
+                  <div>
+                    <span className="text-slate-400 block text-[10px]">Slot Time</span>
+                    <span className="font-bold text-slate-800">{doc.slotDurationMinutes} Mins</span>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-400">Appointment Slot:</span>
-                    <span className="font-medium text-slate-800">{doc.slotDurationMinutes} Minutes</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-400">Reg No:</span>
-                    <span className="font-medium text-slate-800">{doc.registrationNumber}</span>
+                  <div>
+                    <span className="text-slate-400 block text-[10px]">OPD Time</span>
+                    <span className="font-bold text-slate-800">{doc.reportingTime || '09:30 AM'}</span>
                   </div>
                 </div>
 
@@ -297,10 +307,11 @@ const DoctorListPage = () => {
                 </div>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-slate-100">
+              <div className="mt-4 pt-3 border-t border-slate-100">
                 <button
+                  type="button"
                   onClick={() => handleOpenBookingModal(doc)}
-                  className="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm transition flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full py-2.5 sm:py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-bold text-xs sm:text-sm shadow-sm transition flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Calendar className="w-4 h-4" />
                   <span>Select & Book Available Slot</span>
@@ -312,21 +323,28 @@ const DoctorListPage = () => {
         </div>
       )}
 
-      {/* Booking Modal */}
+      {/* Booking Native Bottom Sheet on Mobile / Modal on Desktop */}
       {bookingDoctor && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6 animate-fadeIn">
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-2xl w-full overflow-hidden my-auto">
+        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex flex-col justify-end sm:justify-center sm:items-center sm:p-4">
+          <div
+            className="fixed inset-0"
+            onClick={handleCloseBookingModal}
+          />
+          <div className="relative z-10 bg-white w-full sm:max-w-xl rounded-t-[32px] sm:rounded-3xl shadow-2xl max-h-[90vh] flex flex-col overflow-hidden animate-in slide-in-from-bottom duration-250">
+            {/* Native Mobile Drag Handle */}
+            <div className="w-12 h-1.5 bg-slate-300 rounded-full mx-auto my-2.5 sm:hidden shrink-0" />
+
             {/* Modal Header */}
-            <div className="p-5 sm:p-6 bg-gradient-to-r from-emerald-600 to-teal-600 text-white flex items-center justify-between">
+            <div className="p-4 sm:p-5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white flex items-center justify-between shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md text-white font-black text-lg flex items-center justify-center border border-white/30">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-white/20 backdrop-blur-md text-white font-black text-base sm:text-lg flex items-center justify-center border border-white/30 shrink-0">
                   {bookingDoctor.userId?.name ? bookingDoctor.userId.name.charAt(0) : 'D'}
                 </div>
                 <div>
-                  <h3 className="font-extrabold text-lg leading-tight">
+                  <h3 className="font-extrabold text-sm sm:text-base leading-tight">
                     Dr. {bookingDoctor.userId?.name}
                   </h3>
-                  <p className="text-xs text-emerald-100 font-medium">
+                  <p className="text-[11px] sm:text-xs text-emerald-100 font-medium">
                     {bookingDoctor.specialization} • Fee: ₹{bookingDoctor.consultationFee}
                   </p>
                 </div>

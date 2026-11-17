@@ -6,7 +6,9 @@
   * {
     -webkit-tap-highlight-color: transparent;
   }
-  html, body {
+
+  html,
+  body {
     @apply bg-slate-50 text-slate-800 antialiased;
     overscroll-behavior-y: none;
     -webkit-font-smoothing: antialiased;
@@ -17,14 +19,17 @@
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
   /* Safe area padding for mobile notch and home indicators */
   .safe-bottom {
     padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
   }
+
   .safe-top {
     padding-top: max(0.5rem, env(safe-area-inset-top));
   }
@@ -35,9 +40,12 @@
   body * {
     visibility: hidden;
   }
-  #printable-area, #printable-area * {
+
+  #printable-area,
+  #printable-area * {
     visibility: visible;
   }
+
   #printable-area {
     position: absolute;
     left: 0;
@@ -46,6 +54,7 @@
     margin: 0;
     padding: 20px;
   }
+
   .no-print {
     display: none !important;
   }

@@ -92,11 +92,16 @@ const PatientReportsPage = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-5xl mx-auto space-y-4 sm:space-y-6">
       <div>
-        <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Patient Medical Records & Lab Reports</h1>
-        <p className="text-xs sm:text-sm text-slate-500 mt-1">
-          Store your pathology tests, diagnostic scans, and medical history accessible by your consulting doctors.
+        <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+          <span>Medical Reports & Records</span>
+          <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+            {reports.length}
+          </span>
+        </h1>
+        <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">
+          Store lab tests, pathology and radiology scans accessible by your doctors
         </p>
       </div>
 

@@ -105,7 +105,7 @@ const EmergencyHomeVisitPage = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-5xl mx-auto space-y-4 sm:space-y-6">
       {/* Alert Header */}
       <div className="bg-gradient-to-r from-red-600 to-rose-700 text-white rounded-3xl p-6 sm:p-8 shadow-lg shadow-rose-600/20 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="space-y-2">

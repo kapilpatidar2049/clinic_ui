@@ -140,10 +140,11 @@ export const PortalLayout = ({ children }) => {
     if (p.startsWith('/admin/settings')) return { section: 'Admin', title: 'Clinic Settings' };
     if (p.startsWith('/admin')) return { section: 'Admin', title: 'Overview Dashboard' };
 
+    if (p.startsWith('/doctors')) return { section: 'Patient', title: 'Find Doctors' };
     if (p.startsWith('/doctor/schedule')) return { section: 'Doctor', title: 'Schedule & Slots' };
     if (p.startsWith('/doctor/prescribe')) return { section: 'Doctor', title: 'Write Prescription' };
     if (p.startsWith('/doctor/home-visits')) return { section: 'Doctor', title: 'Emergency Home Visits' };
-    if (p.startsWith('/doctor')) return { section: 'Doctor', title: 'Doctor Dashboard' };
+    if (p === '/doctor' || p.startsWith('/doctor/')) return { section: 'Doctor', title: 'Doctor Dashboard' };
 
     if (p.startsWith('/staff/walk-in')) return { section: 'Staff', title: 'Walk-In Registration' };
     if (p.startsWith('/staff/reception')) return { section: 'Staff', title: 'Reception & Queue' };
@@ -189,32 +190,54 @@ export const PortalLayout = ({ children }) => {
 
       {/* 3. Main Content Wrapper */}
       <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden relative">
-        {/* Top Header Bar */}
-        <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/90 px-3 sm:px-6 py-2.5 shrink-0 flex items-center justify-between gap-2 shadow-xs">
-          {/* Left: Mobile App Brand / Desktop Breadcrumbs */}
+        {/* Top Header Bar - Optimized for Native Mobile App & Desktop */}
+        <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/90 px-3 sm:px-6 py-2 shrink-0 flex items-center justify-between gap-2 shadow-xs">
+          {/* Left: Mobile App Profile & Persona / Desktop Breadcrumbs */}
           <div className="flex items-center gap-2.5 min-w-0">
-            {/* Mobile App Bar Header */}
-            <div className="flex lg:hidden items-center gap-2">
+            {/* Native Mobile App Header Component */}
+            <div className="flex lg:hidden items-center gap-2.5">
               <button
                 type="button"
-                onClick={() => setMobileOpen(true)}
-                className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 active:scale-95 transition cursor-pointer"
-                aria-label="Open menu drawer"
+                onClick={() => setShowRoleModal(true)}
+                className="relative active:scale-95 transition cursor-pointer"
+                aria-label="Profile and Persona Switcher"
               >
-                <Heart className="w-4 h-4 fill-current" />
+                <div
+                  className={`w-9 h-9 rounded-full flex items-center justify-center text-white font-extrabold text-xs shadow-sm ring-2 ${
+                    currentRole === 'Doctor'
+                      ? 'bg-teal-600 ring-teal-200'
+                      : currentRole === 'Admin'
+                      ? 'bg-purple-700 ring-purple-200'
+                      : 'bg-emerald-600 ring-emerald-200'
+                  }`}
+                >
+                  {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                </div>
+                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full"></span>
               </button>
+
               <div className="leading-tight truncate">
                 <div className="flex items-center gap-1.5">
-                  <span className="font-extrabold text-sm text-slate-900 tracking-tight">My Clinic</span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <span className="font-extrabold text-sm text-slate-900 tracking-tight truncate max-w-[140px]">
+                    {user?.name ? user.name.split(' ')[0] : 'User'}
+                  </span>
+                  <span className="text-[10px] text-slate-400">👋</span>
                 </div>
-                {/* Clickable Mobile Role Pill */}
+                {/* Clickable Persona Pill */}
                 <button
                   type="button"
                   onClick={() => setShowRoleModal(true)}
-                  className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60 active:scale-95 transition"
+                  className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border active:scale-95 transition cursor-pointer ${
+                    currentRole === 'Doctor'
+                      ? 'bg-teal-50 text-teal-800 border-teal-200'
+                      : currentRole === 'Admin'
+                      ? 'bg-purple-50 text-purple-800 border-purple-200'
+                      : 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                  }`}
                 >
-                  <span>{currentRole}</span>
+                  <span>
+                    {currentRole === 'Doctor' ? '🩺 Doctor' : currentRole === 'Admin' ? '👑 Admin' : currentRole === 'Staff' ? '💼 Staff' : '👤 Patient'}
+                  </span>
                   <ChevronRight className="w-2.5 h-2.5 opacity-60" />
                 </button>
               </div>
@@ -224,7 +247,7 @@ export const PortalLayout = ({ children }) => {
             <div className="hidden lg:flex items-center gap-3">
               <button
                 onClick={() => setMobileOpen(true)}
-                className="p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 transition"
+                className="p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 transition cursor-pointer"
                 aria-label="Open navigation sidebar"
               >
                 <Menu className="w-5 h-5" />
@@ -264,7 +287,7 @@ export const PortalLayout = ({ children }) => {
             <div className="relative">
               <button
                 onClick={() => setShowNotifMenu(!showNotifMenu)}
-                className="relative p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 transition cursor-pointer"
+                className="relative p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 transition cursor-pointer active:scale-95"
                 aria-label="Notifications"
               >
                 <Bell className="w-4 h-4" />
@@ -309,8 +332,18 @@ export const PortalLayout = ({ children }) => {
               )}
             </div>
 
-            {/* User Profile Info Chip (Top bar) */}
-            <div className="flex items-center gap-2 pl-2 sm:pl-3 border-l border-slate-200">
+            {/* Mobile Drawer Menu Button */}
+            <button
+              type="button"
+              onClick={() => setMobileOpen(true)}
+              className="lg:hidden p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 active:scale-95 transition cursor-pointer"
+              aria-label="Open App Menu"
+            >
+              <Menu className="w-4 h-4" />
+            </button>
+
+            {/* Desktop User Profile Info Chip (Top bar) */}
+            <div className="hidden lg:flex items-center gap-2 pl-3 border-l border-slate-200">
               <button
                 type="button"
                 onClick={() => setShowRoleModal(true)}
@@ -319,7 +352,7 @@ export const PortalLayout = ({ children }) => {
               >
                 {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
               </button>
-              <div className="hidden md:block text-left text-xs leading-tight">
+              <div className="text-left text-xs leading-tight">
                 <div className="font-bold text-slate-900 truncate max-w-[150px]">
                   {user?.name || 'User'}
                 </div>
@@ -342,8 +375,8 @@ export const PortalLayout = ({ children }) => {
           </div>
         </header>
 
-        {/* Independent Scrollable Page Content - with bottom padding on mobile for App Tab Bar */}
-        <main className="flex-1 overflow-y-auto p-3.5 sm:p-6 lg:p-8 pb-24 lg:pb-8 scroll-smooth overscroll-contain">
+        {/* Independent Scrollable Page Content - with generous bottom padding on mobile for App Tab Bar */}
+        <main className="flex-1 overflow-y-auto p-3.5 sm:p-6 lg:p-8 pb-28 lg:pb-8 scroll-smooth overscroll-contain">
           {children}
         </main>
 
