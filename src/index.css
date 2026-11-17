@@ -3,8 +3,13 @@
 @tailwind utilities;
 
 @layer base {
-  body {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  html, body {
     @apply bg-slate-50 text-slate-800 antialiased;
+    overscroll-behavior-y: none;
+    -webkit-font-smoothing: antialiased;
   }
 }
 
@@ -15,6 +20,13 @@
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+  /* Safe area padding for mobile notch and home indicators */
+  .safe-bottom {
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+  }
+  .safe-top {
+    padding-top: max(0.5rem, env(safe-area-inset-top));
   }
 }
 

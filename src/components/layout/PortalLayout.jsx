@@ -9,6 +9,20 @@ import {
   LogOut,
   ChevronRight,
   ShieldCheck,
+  Heart,
+  Calendar,
+  Stethoscope,
+  FileText,
+  Activity,
+  Ambulance,
+  LayoutDashboard,
+  Clock,
+  Briefcase,
+  CheckSquare,
+  Users,
+  X,
+  User,
+  Sparkles,
 } from 'lucide-react';
 
 const ROLE_BUTTONS = [
@@ -17,6 +31,37 @@ const ROLE_BUTTONS = [
   { id: 'Staff', label: '💼 Staff' },
   { id: 'Patient', label: '👤 Patient' },
 ];
+
+const MOBILE_BOTTOM_TABS = {
+  Patient: [
+    { label: 'Visits', path: '/patient/appointments', icon: Calendar },
+    { label: 'Doctors', path: '/doctors', icon: Stethoscope },
+    { label: 'Rx Meds', path: '/patient/prescriptions', icon: FileText },
+    { label: 'Reports', path: '/patient/reports', icon: Activity },
+    { label: 'Emergency', path: '/emergency', icon: Ambulance, highlight: true },
+  ],
+  Doctor: [
+    { label: 'OPD Queue', path: '/doctor', icon: LayoutDashboard },
+    { label: 'Prescribe', path: '/doctor/prescribe', icon: FileText },
+    { label: 'Schedule', path: '/doctor/schedule', icon: Clock },
+    { label: 'Home Visits', path: '/doctor/home-visits', icon: Ambulance },
+    { label: 'More', action: 'drawer', icon: Menu },
+  ],
+  Staff: [
+    { label: 'Dashboard', path: '/staff', icon: LayoutDashboard },
+    { label: 'Reception', path: '/staff/reception', icon: Briefcase },
+    { label: 'Attendance', path: '/staff/attendance', icon: Clock },
+    { label: 'Tasks', path: '/staff/tasks', icon: CheckSquare },
+    { label: 'More', action: 'drawer', icon: Menu },
+  ],
+  Admin: [
+    { label: 'Overview', path: '/admin', icon: LayoutDashboard },
+    { label: 'Patients', path: '/admin/patients', icon: Users },
+    { label: 'Doctors', path: '/admin/doctors', icon: Stethoscope },
+    { label: 'Bookings', path: '/admin/appointments', icon: Calendar },
+    { label: 'More', action: 'drawer', icon: Menu },
+  ],
+};
 
 export const PortalLayout = ({ children }) => {
   const { user, logout, demoLogin } = useAuth();
@@ -27,6 +72,10 @@ export const PortalLayout = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [showNotifMenu, setShowNotifMenu] = useState(false);
+  const [showRoleModal, setShowRoleModal] = useState(false);
+
+  const currentRole = user?.role || 'Patient';
+  const currentMobileTabs = MOBILE_BOTTOM_TABS[currentRole] || MOBILE_BOTTOM_TABS.Patient;
 
   useEffect(() => {
     if (user) {
@@ -139,29 +188,59 @@ export const PortalLayout = ({ children }) => {
       )}
 
       {/* 3. Main Content Wrapper */}
-      <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden relative">
         {/* Top Header Bar */}
-        <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/90 px-4 sm:px-6 py-2.5 shrink-0 flex items-center justify-between gap-3 shadow-xs">
-          {/* Left: Mobile hamburger & Breadcrumbs */}
-          <div className="flex items-center gap-3 min-w-0">
-            <button
-              onClick={() => setMobileOpen(true)}
-              className="lg:hidden p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 transition"
-              aria-label="Open navigation sidebar"
-            >
-              <Menu className="w-5 h-5" />
-            </button>
+        <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/90 px-3 sm:px-6 py-2.5 shrink-0 flex items-center justify-between gap-2 shadow-xs">
+          {/* Left: Mobile App Brand / Desktop Breadcrumbs */}
+          <div className="flex items-center gap-2.5 min-w-0">
+            {/* Mobile App Bar Header */}
+            <div className="flex lg:hidden items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setMobileOpen(true)}
+                className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 active:scale-95 transition cursor-pointer"
+                aria-label="Open menu drawer"
+              >
+                <Heart className="w-4 h-4 fill-current" />
+              </button>
+              <div className="leading-tight truncate">
+                <div className="flex items-center gap-1.5">
+                  <span className="font-extrabold text-sm text-slate-900 tracking-tight">My Clinic</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                </div>
+                {/* Clickable Mobile Role Pill */}
+                <button
+                  type="button"
+                  onClick={() => setShowRoleModal(true)}
+                  className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60 active:scale-95 transition"
+                >
+                  <span>{currentRole}</span>
+                  <ChevronRight className="w-2.5 h-2.5 opacity-60" />
+                </button>
+              </div>
+            </div>
 
-            <div className="flex items-center gap-2 text-xs sm:text-sm font-semibold truncate">
-              <span className="text-slate-400 hidden sm:inline">{breadcrumb.section}</span>
-              <ChevronRight className="w-3.5 h-3.5 text-slate-400 hidden sm:inline shrink-0" />
-              <span className="text-slate-900 font-bold truncate">{breadcrumb.title}</span>
+            {/* Desktop Hamburger & Breadcrumbs */}
+            <div className="hidden lg:flex items-center gap-3">
+              <button
+                onClick={() => setMobileOpen(true)}
+                className="p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 transition"
+                aria-label="Open navigation sidebar"
+              >
+                <Menu className="w-5 h-5" />
+              </button>
+
+              <div className="flex items-center gap-2 text-xs sm:text-sm font-semibold truncate">
+                <span className="text-slate-400">{breadcrumb.section}</span>
+                <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                <span className="text-slate-900 font-bold truncate">{breadcrumb.title}</span>
+              </div>
             </div>
           </div>
 
           {/* Right: Role Switcher Pills + Notification Bell + User Profile Chip */}
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* Quick Demo Switcher on Header */}
+            {/* Desktop Role Switcher Pills */}
             <div className="hidden sm:flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200/80">
               {ROLE_BUTTONS.map((r) => {
                 const isCur = user?.role === r.id;
@@ -169,7 +248,7 @@ export const PortalLayout = ({ children }) => {
                   <button
                     key={r.id}
                     onClick={() => handleRoleSwitch(r.id)}
-                    className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition ${
+                    className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer ${
                       isCur
                         ? 'bg-purple-700 text-white shadow-xs'
                         : 'text-slate-600 hover:text-slate-900 hover:bg-white'
@@ -185,7 +264,7 @@ export const PortalLayout = ({ children }) => {
             <div className="relative">
               <button
                 onClick={() => setShowNotifMenu(!showNotifMenu)}
-                className="relative p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 transition"
+                className="relative p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 transition cursor-pointer"
                 aria-label="Notifications"
               >
                 <Bell className="w-4 h-4" />
@@ -197,13 +276,13 @@ export const PortalLayout = ({ children }) => {
               </button>
 
               {showNotifMenu && (
-                <div className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-slate-200 p-3 z-50">
+                <div className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-slate-200 p-3 z-50 animate-fadeIn">
                   <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
                     <span className="font-bold text-xs text-slate-800">Notifications</span>
                     {unreadCount > 0 && (
                       <button
                         onClick={markAllRead}
-                        className="text-[11px] text-purple-600 hover:text-purple-800 font-medium"
+                        className="text-[11px] text-purple-600 hover:text-purple-800 font-medium cursor-pointer"
                       >
                         Mark all read
                       </button>
@@ -232,9 +311,14 @@ export const PortalLayout = ({ children }) => {
 
             {/* User Profile Info Chip (Top bar) */}
             <div className="flex items-center gap-2 pl-2 sm:pl-3 border-l border-slate-200">
-              <div className="w-8 h-8 rounded-xl bg-purple-700 text-white font-bold text-xs flex items-center justify-center shadow-xs">
+              <button
+                type="button"
+                onClick={() => setShowRoleModal(true)}
+                className="w-8 h-8 rounded-xl bg-purple-700 text-white font-bold text-xs flex items-center justify-center shadow-xs active:scale-95 transition cursor-pointer"
+                title="Profile / Switch Role"
+              >
                 {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
-              </div>
+              </button>
               <div className="hidden md:block text-left text-xs leading-tight">
                 <div className="font-bold text-slate-900 truncate max-w-[150px]">
                   {user?.name || 'User'}
@@ -248,7 +332,7 @@ export const PortalLayout = ({ children }) => {
               {/* Quick Logout button on Header */}
               <button
                 onClick={handleLogout}
-                className="p-1.5 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition"
+                className="p-1.5 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer"
                 title="Sign Out"
                 aria-label="Sign Out"
               >
@@ -258,10 +342,138 @@ export const PortalLayout = ({ children }) => {
           </div>
         </header>
 
-        {/* Independent Scrollable Page Content */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 scroll-smooth">
+        {/* Independent Scrollable Page Content - with bottom padding on mobile for App Tab Bar */}
+        <main className="flex-1 overflow-y-auto p-3.5 sm:p-6 lg:p-8 pb-24 lg:pb-8 scroll-smooth overscroll-contain">
           {children}
         </main>
+
+        {/* 4. Native App Bottom Navigation Bar for Mobile */}
+        <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-lg border-t border-slate-200/90 shadow-[0_-4px_25px_rgba(0,0,0,0.08)] px-1.5 pt-1 safe-bottom flex items-center justify-around">
+          {currentMobileTabs.map((tab, idx) => {
+            const Icon = tab.icon;
+            const isCur = tab.path
+              ? location.pathname === tab.path ||
+                (tab.path !== '/' && location.pathname.startsWith(tab.path) && tab.path !== '/doctor') ||
+                (tab.path === '/doctor' && location.pathname === '/doctor')
+              : false;
+
+            return (
+              <button
+                key={tab.label || idx}
+                type="button"
+                onClick={() => {
+                  if (tab.action === 'drawer') {
+                    setMobileOpen(true);
+                  } else if (tab.path) {
+                    navigate(tab.path);
+                  }
+                }}
+                className={`relative flex flex-col items-center justify-center py-1.5 px-2.5 rounded-2xl transition-all duration-150 active:scale-90 cursor-pointer ${
+                  tab.highlight
+                    ? isCur
+                      ? 'text-rose-600 font-bold'
+                      : 'text-rose-500 hover:text-rose-600'
+                    : isCur
+                    ? currentRole === 'Doctor'
+                      ? 'text-teal-700 font-bold'
+                      : 'text-emerald-700 font-bold'
+                    : 'text-slate-400 hover:text-slate-700'
+                }`}
+              >
+                <div
+                  className={`p-1 rounded-xl transition-all ${
+                    isCur
+                      ? tab.highlight
+                        ? 'bg-rose-50 shadow-xs ring-1 ring-rose-200'
+                        : currentRole === 'Doctor'
+                        ? 'bg-teal-50 shadow-xs ring-1 ring-teal-200'
+                        : 'bg-emerald-50 shadow-xs ring-1 ring-emerald-200'
+                      : ''
+                  }`}
+                >
+                  <Icon className={`w-5 h-5 ${isCur ? 'stroke-[2.5]' : 'stroke-2'}`} />
+                </div>
+                <span className={`text-[10px] tracking-tight mt-0.5 ${isCur ? 'font-bold' : 'font-medium'}`}>
+                  {tab.label}
+                </span>
+
+                {/* Active indicator dot */}
+                {isCur && (
+                  <span
+                    className={`absolute bottom-0 w-1.5 h-1.5 rounded-full ${
+                      tab.highlight
+                        ? 'bg-rose-600'
+                        : currentRole === 'Doctor'
+                        ? 'bg-teal-600'
+                        : 'bg-emerald-600'
+                    }`}
+                  />
+                )}
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* 5. Mobile Role Switcher Sheet Modal */}
+        {showRoleModal && (
+          <div className="fixed inset-0 z-50 lg:hidden flex flex-col justify-end">
+            <div
+              className="fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity animate-fadeIn"
+              onClick={() => setShowRoleModal(false)}
+            />
+            <div className="relative z-10 bg-white rounded-t-3xl border-t border-slate-200 shadow-2xl p-5 space-y-4 animate-in slide-in-from-bottom duration-200 safe-bottom">
+              <div className="w-12 h-1.5 bg-slate-200 rounded-full mx-auto -mt-1" />
+              <div className="flex items-center justify-between pb-1 border-b border-slate-100">
+                <div>
+                  <h3 className="font-extrabold text-slate-900 text-base">Select Portal Persona</h3>
+                  <p className="text-[11px] text-slate-500">Switch role or sign out of your session</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowRoleModal(false)}
+                  className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:text-slate-800"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2.5 pt-1">
+                {ROLE_BUTTONS.map((r) => {
+                  const isCur = user?.role === r.id;
+                  return (
+                    <button
+                      key={r.id}
+                      type="button"
+                      onClick={() => {
+                        setShowRoleModal(false);
+                        handleRoleSwitch(r.id);
+                      }}
+                      className={`p-3.5 rounded-2xl border text-left flex items-center justify-between transition cursor-pointer ${
+                        isCur
+                          ? 'border-purple-600 bg-purple-50/70 text-purple-900 font-bold shadow-xs'
+                          : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold'
+                      }`}
+                    >
+                      <span className="text-xs">{r.label}</span>
+                      {isCur && <ShieldCheck className="w-4 h-4 text-purple-600" />}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="pt-2 border-t border-slate-100 flex gap-2">
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="w-full py-2.5 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs flex items-center justify-center gap-1.5 transition"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span>Sign Out</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
