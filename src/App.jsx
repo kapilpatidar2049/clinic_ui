@@ -16,6 +16,7 @@ import EmergencyHomeVisitPage from './pages/patient/EmergencyHomeVisitPage';
 
 // Patient Pages
 import MyAppointmentsPage from './pages/patient/MyAppointmentsPage';
+import BookAppointmentPage from './pages/patient/BookAppointmentPage';
 import PatientPrescriptionsPage from './pages/patient/PatientPrescriptionsPage';
 import PatientReportsPage from './pages/patient/PatientReportsPage';
 
@@ -93,6 +94,14 @@ function App() {
         element={
           <ProtectedRoute allowedRoles={['Patient', 'Doctor', 'Staff', 'Admin']}>
             <MyAppointmentsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/patient/book/:doctorId"
+        element={
+          <ProtectedRoute allowedRoles={['Patient', 'Doctor', 'Staff', 'Admin']}>
+            <BookAppointmentPage />
           </ProtectedRoute>
         }
       />
